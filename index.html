@@ -38,6 +38,19 @@
     padding:9px 18px;border-radius:999px;transition:transform .15s ease;
   }
   .nav-cta:hover{transform:translateY(-1px);}
+  .nav-auth{display:flex;align-items:center;gap:10px;}
+  .nav-login-btn{background:transparent;color:var(--text);border:1px solid var(--panel-border);font-family:inherit;font-weight:700;font-size:13px;padding:8px 16px;border-radius:999px;cursor:pointer;}
+  .nav-login-btn:hover{border-color:var(--text-faint);}
+  .nav-user{display:none;align-items:center;gap:8px;cursor:pointer;position:relative;}
+  .nav-user.show{display:flex;}
+  .nav-user-avatar{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#0a0a0a;overflow:hidden;flex:none;}
+  .nav-user-avatar img{width:100%;height:100%;object-fit:cover;}
+  .nav-user-plan{font-size:10px;font-weight:800;letter-spacing:.03em;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,0.06);color:var(--text-dim);}
+  .nav-user-plan.pro,.nav-user-plan.nolimit{background:var(--accent-soft);color:var(--accent);}
+  .nav-user-menu{position:absolute;top:calc(100% + 10px);right:0;background:var(--panel);border:1px solid var(--panel-border);border-radius:10px;padding:8px;min-width:150px;display:none;z-index:60;}
+  .nav-user-menu.show{display:block;}
+  .nav-user-menu button{width:100%;text-align:left;background:transparent;border:none;color:var(--text-dim);font-family:inherit;font-size:12.5px;padding:8px 10px;border-radius:6px;cursor:pointer;}
+  .nav-user-menu button:hover{background:var(--pill-bg);color:var(--text);}
   @media (max-width:760px){ .nav-links{display:none;} }
 
   /* HERO */
@@ -50,7 +63,11 @@
   .hero-glow{
     position:absolute;inset:0;pointer-events:none;
     background:radial-gradient(620px circle at var(--mx,50%) var(--my,38%), rgba(233,233,231,0.14), transparent 62%);
+    opacity:0;transition:opacity .35s ease;
+    -webkit-mask-image:linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+    mask-image:linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
   }
+  .hero-glow.is-active{opacity:1;}
   .eyebrow{
     display:inline-flex;align-items:center;gap:7px;font-size:11.5px;letter-spacing:.04em;color:var(--text-dim);
     background:var(--pill-bg);border:1px solid var(--panel-border);padding:6px 14px;
@@ -150,6 +167,7 @@
   .footer-bottom{max-width:1120px;margin:40px auto 0;padding-top:20px;border-top:1px solid var(--panel-border);font-size:12px;color:var(--text-faint);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
 </style>
 <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -161,6 +179,16 @@
     <a href="#pricing">Тарифы</a>
   </div>
   <a class="nav-cta" href="https://t.me/emerva_tools_bot" target="_blank">Открыть в Telegram</a>
+  <div class="nav-auth">
+    <button class="nav-login-btn" id="navLoginBtn">Войти через Google</button>
+    <div class="nav-user" id="navUser">
+      <div class="nav-user-avatar" id="navUserAvatar">?</div>
+      <span class="nav-user-plan" id="navUserPlan">Free</span>
+      <div class="nav-user-menu" id="navUserMenu">
+        <button id="navLogoutBtn">Выйти</button>
+      </div>
+    </div>
+  </div>
 </nav>
 
 <div class="hero" id="heroSection">
@@ -309,9 +337,16 @@
 <script>
 document.addEventListener('mousemove', function(e){
   var hero = document.getElementById('heroSection');
+  var glow = document.getElementById('heroGlow');
   var rect = hero.getBoundingClientRect();
-  document.getElementById('heroGlow').style.setProperty('--mx', (e.clientX - rect.left) + 'px');
-  document.getElementById('heroGlow').style.setProperty('--my', (e.clientY - rect.top) + 'px');
+  var inside = e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
+  if(!inside){ glow.classList.remove('is-active'); return; }
+  glow.classList.add('is-active');
+  glow.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
+  glow.style.setProperty('--my', (e.clientY - rect.top) + 'px');
+});
+document.addEventListener('mouseleave', function(){
+  document.getElementById('heroGlow').classList.remove('is-active');
 });
 
 // Генерируем трещины на фоне (тонкие рандомные линии от нескольких очагов)
@@ -389,11 +424,11 @@ document.addEventListener('mousemove', function(e){
 // ==== ОПЛАТА (Paddle) ====
 // Вставь свои значения из Paddle (Developer Tools -> Authentication -> Client-side token,
 // и Catalog -> Products -> у каждой цены есть Price ID вида pri_xxxxx)
-var PADDLE_CLIENT_TOKEN = 'PASTE_PADDLE_CLIENT_TOKEN';
+var PADDLE_CLIENT_TOKEN = 'live_8fbffd789393fbfcb7d68e03ae7';
 var PADDLE_ENV = 'production'; // поставь 'sandbox', пока тестируешь
 var PADDLE_PRICE_IDS = {
-  pro: 'PASTE_PRICE_PRO_1M',
-  nolimit: 'PASTE_PRICE_NOLIMIT_1M'
+  pro: 'pri_01m2nq5tsmk4j7hw529ar24775',
+  nolimit: 'pri_01m2nq70xjagw1f8jg8ceygw2x'
 };
 
 if(window.Paddle && PADDLE_CLIENT_TOKEN.indexOf('PASTE_') !== 0){
@@ -414,8 +449,100 @@ function openPaddleCheckout(plan){
   });
 }
 
-document.getElementById('ctaPro').addEventListener('click', function(e){ e.preventDefault(); openPaddleCheckout('pro'); });
-document.getElementById('ctaNoLimit').addEventListener('click', function(e){ e.preventDefault(); openPaddleCheckout('nolimit'); });
+document.getElementById('ctaPro').addEventListener('click', function(e){ e.preventDefault(); requireLoginThen(function(){ openPaddleCheckout('pro'); }); });
+document.getElementById('ctaNoLimit').addEventListener('click', function(e){ e.preventDefault(); requireLoginThen(function(){ openPaddleCheckout('nolimit'); }); });
+
+// ==== АККАУНТ (Supabase Auth + подписка) ====
+var SUPABASE_URL = 'https://vnfrhbhujidkxmenhhgm.supabase.co';
+var SUPABASE_ANON_KEY = 'sb_publishable_p5waHclDEHmfzG-QEy7xLw_yYsqZYhF';
+var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+var currentUser = null;   // объект пользователя из Supabase Auth
+var currentProfile = null; // строка из emerva_users (план, и т.д.)
+
+function requireLoginThen(action){
+  if(currentUser){ action(); return; }
+  // запоминаем, что человек хотел сделать, чтобы продолжить после возврата с Google
+  sessionStorage.setItem('emerva_pending_action', action === openProAction ? '' : '');
+  loginWithGoogle();
+}
+
+function loginWithGoogle(){
+  sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin + window.location.pathname + '#pricing' }
+  });
+}
+
+function logout(){
+  sb.auth.signOut().then(function(){
+    currentUser = null;
+    currentProfile = null;
+    renderAuthUI();
+  });
+}
+
+function fetchProfile(){
+  if(!currentUser) return Promise.resolve(null);
+  return sb.from('emerva_users').select('*').eq('auth_user_id', currentUser.id).single()
+    .then(function(res){
+      currentProfile = res.data || null;
+      renderAuthUI();
+      return currentProfile;
+    });
+}
+
+function renderAuthUI(){
+  var loginBtn = document.getElementById('navLoginBtn');
+  var userChip = document.getElementById('navUser');
+  var avatar = document.getElementById('navUserAvatar');
+  var planEl = document.getElementById('navUserPlan');
+
+  if(!currentUser){
+    loginBtn.style.display = 'inline-block';
+    userChip.classList.remove('show');
+    return;
+  }
+
+  loginBtn.style.display = 'none';
+  userChip.classList.add('show');
+
+  var meta = currentUser.user_metadata || {};
+  var avatarUrl = meta.avatar_url || '';
+  var name = meta.full_name || meta.name || currentUser.email || '?';
+  if(avatarUrl){
+    avatar.innerHTML = '<img src="' + avatarUrl + '" alt="">';
+  } else {
+    avatar.textContent = name.trim().charAt(0).toUpperCase();
+  }
+
+  var plan = currentProfile ? currentProfile.plan : 'free';
+  var planLabel = plan === 'pro' ? 'Pro' : (plan === 'nolimit' ? 'No Limit' : 'Free');
+  planEl.textContent = planLabel;
+  planEl.className = 'nav-user-plan' + (plan === 'pro' || plan === 'nolimit' ? ' ' + plan : '');
+}
+
+document.getElementById('navLoginBtn').addEventListener('click', loginWithGoogle);
+document.getElementById('navUser').addEventListener('click', function(e){
+  document.getElementById('navUserMenu').classList.toggle('show');
+  e.stopPropagation();
+});
+document.addEventListener('click', function(){ document.getElementById('navUserMenu').classList.remove('show'); });
+document.getElementById('navLogoutBtn').addEventListener('click', logout);
+
+// при загрузке страницы проверяем, есть ли уже сессия (человек логинился раньше)
+sb.auth.getSession().then(function(res){
+  currentUser = res.data.session ? res.data.session.user : null;
+  renderAuthUI();
+  if(currentUser) fetchProfile();
+});
+
+// когда Supabase меняет состояние входа (после редиректа с Google и т.д.)
+sb.auth.onAuthStateChange(function(event, session){
+  currentUser = session ? session.user : null;
+  renderAuthUI();
+  if(currentUser) fetchProfile();
+});
 </script>
 </body>
 </html>
