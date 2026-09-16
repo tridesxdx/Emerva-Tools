@@ -32,6 +32,7 @@
   .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px;}
   .brand img{width:26px;height:26px;object-fit:contain;filter:grayscale(1) brightness(1.6) contrast(1.4);}
   .nav-links{display:flex;align-items:center;gap:28px;font-size:13.5px;color:var(--text-dim);}
+  .nav-right{display:flex;align-items:center;gap:16px;}
   .nav-links a:hover{color:var(--text);}
   .nav-cta{
     background:var(--text);color:#0a0a0a;font-weight:700;font-size:13px;
@@ -178,6 +179,7 @@
     <a href="#how">Как это работает</a>
     <a href="#pricing">Тарифы</a>
   </div>
+  <div class="nav-right">
   <a class="nav-cta" href="https://t.me/emerva_tools_bot" target="_blank">Открыть в Telegram</a>
   <div class="nav-auth">
     <button class="nav-login-btn" id="navLoginBtn">Войти через Google</button>
@@ -188,6 +190,7 @@
         <button id="navLogoutBtn">Выйти</button>
       </div>
     </div>
+  </div>
   </div>
 </nav>
 
@@ -449,8 +452,8 @@ function openPaddleCheckout(plan){
   });
 }
 
-document.getElementById('ctaPro').addEventListener('click', function(e){ e.preventDefault(); requireLoginThen(function(){ openPaddleCheckout('pro'); }); });
-document.getElementById('ctaNoLimit').addEventListener('click', function(e){ e.preventDefault(); requireLoginThen(function(){ openPaddleCheckout('nolimit'); }); });
+document.getElementById('ctaPro').addEventListener('click', function(e){ e.preventDefault(); requireLoginThen(function(){ openPaddleCheckout('pro'); }, 'pro'); });
+document.getElementById('ctaNoLimit').addEventListener('click', function(e){ e.preventDefault(); requireLoginThen(function(){ openPaddleCheckout('nolimit'); }, 'nolimit'); });
 
 // ==== АККАУНТ (Supabase Auth + подписка) ====
 var SUPABASE_URL = 'https://vnfrhbhujidkxmenhhgm.supabase.co';
@@ -460,17 +463,17 @@ var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 var currentUser = null;   // объект пользователя из Supabase Auth
 var currentProfile = null; // строка из emerva_users (план, и т.д.)
 
-function requireLoginThen(action){
+function requireLoginThen(action, planName){
   if(currentUser){ action(); return; }
-  // запоминаем, что человек хотел сделать, чтобы продолжить после возврата с Google
-  sessionStorage.setItem('emerva_pending_action', action === openProAction ? '' : '');
+  // запоминаем какой план хотели купить, чтобы открыть Checkout сразу после возврата с Google
+  if(planName) sessionStorage.setItem('emerva_pending_plan', planName);
   loginWithGoogle();
 }
 
 function loginWithGoogle(){
   sb.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.origin + window.location.pathname + '#pricing' }
+    options: { redirectTo: window.location.origin + window.location.pathname }
   });
 }
 
@@ -488,6 +491,11 @@ function fetchProfile(){
     .then(function(res){
       currentProfile = res.data || null;
       renderAuthUI();
+      var pendingPlan = sessionStorage.getItem('emerva_pending_plan');
+      if(pendingPlan){
+        sessionStorage.removeItem('emerva_pending_plan');
+        openPaddleCheckout(pendingPlan);
+      }
       return currentProfile;
     });
 }
