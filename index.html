@@ -323,8 +323,9 @@
     </div>
     <div class="footer-col">
       <h4>Документы</h4>
-      <a href="terms.html">Условия использования</a>
-      <a href="privacy.html">Политика конфиденциальности</a>
+      <a href="emerva-website-terms.html">Условия использования</a>
+      <a href="emerva-website-privacy.html">Политика конфиденциальности</a>
+      <a href="emerva-website-refunds.html">Политика возврата средств</a>
     </div>
     <div class="footer-col">
       <h4>Контакты</h4>
@@ -446,10 +447,16 @@ function openPaddleCheckout(plan){
     return;
   }
   if(!window.Paddle){ alert('Paddle не загрузился, проверь соединение.'); return; }
-  Paddle.Checkout.open({
+  var checkoutConfig = {
     items: [{ priceId: priceId, quantity: 1 }],
     settings: { displayMode: 'overlay', theme: 'dark', locale: 'ru' }
-  });
+  };
+  // передаём id пользователя Supabase — вебхук потом найдёт по нему нужную строку и проставит план
+  if(typeof currentUser !== 'undefined' && currentUser){
+    checkoutConfig.customData = { supabase_user_id: currentUser.id };
+    checkoutConfig.customer = { email: currentUser.email };
+  }
+  Paddle.Checkout.open(checkoutConfig);
 }
 
 document.getElementById('ctaPro').addEventListener('click', function(e){ e.preventDefault(); requireLoginThen(function(){ openPaddleCheckout('pro'); }, 'pro'); });
