@@ -155,6 +155,8 @@
   .price-feature svg{flex:none;margin-top:2px;color:var(--accent);}
   .price-cta{margin-top:20px;text-align:center;padding:12px;border-radius:11px;font-weight:700;font-size:13px;background:var(--pill-bg);border:1px solid var(--panel-border);transition:border-color .15s ease;}
   .price-card.highlight .price-cta{background:var(--text);color:#0a0a0a;border:none;}
+  .price-cta-alt{display:block;margin-top:8px;text-align:center;padding:9px;border-radius:9px;font-weight:600;font-size:11.5px;color:var(--text-faint);border:1px dashed var(--panel-border);}
+  .price-cta-alt:hover{color:var(--text-dim);border-color:var(--text-faint);}
   .price-cta:hover{border-color:var(--text-faint);}
 
   footer{border-top:1px solid var(--panel-border);padding:50px 24px 30px;}
@@ -296,6 +298,7 @@
       <div class="price-feature">✓ 6 категорий ниш одновременно</div>
       <div class="price-feature">✓ Все темы оформления</div>
       <a class="price-cta" href="#" id="ctaPro" data-plan="pro">Выбрать Pro</a>
+      <a class="price-cta-alt" href="#" id="ctaProCrypto" data-plan="pro">Оплатить картой/крипто</a>
     </div>
     <div class="price-card">
       <div class="price-name">No Limit</div>
@@ -305,6 +308,7 @@
       <div class="price-feature">✓ Все 12 категорий ниш</div>
       <div class="price-feature">✓ Приоритетная поддержка</div>
       <a class="price-cta" href="#" id="ctaNoLimit" data-plan="nolimit">Выбрать No Limit</a>
+      <a class="price-cta-alt" href="#" id="ctaNoLimitCrypto" data-plan="nolimit">Оплатить картой/крипто</a>
     </div>
   </div>
 </section>
@@ -461,6 +465,27 @@ function openPaddleCheckout(plan){
 
 document.getElementById('ctaPro').addEventListener('click', function(e){ e.preventDefault(); requireLoginThen(function(){ openPaddleCheckout('pro'); }, 'pro'); });
 document.getElementById('ctaNoLimit').addEventListener('click', function(e){ e.preventDefault(); requireLoginThen(function(){ openPaddleCheckout('nolimit'); }, 'nolimit'); });
+document.getElementById('ctaProCrypto').addEventListener('click', function(e){ e.preventDefault(); requireLoginThen(function(){ openNowPaymentsInvoice('pro'); }, 'pro'); });
+document.getElementById('ctaNoLimitCrypto').addEventListener('click', function(e){ e.preventDefault(); requireLoginThen(function(){ openNowPaymentsInvoice('nolimit'); }, 'nolimit'); });
+
+function openNowPaymentsInvoice(plan){
+  fetch('https://vnfrhbhujidkxmenhhgm.supabase.co/functions/v1/create-nowpayments-invoice', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      plan: plan,
+      supabaseUserId: currentUser ? currentUser.id : null,
+      successUrl: window.location.origin + window.location.pathname,
+      cancelUrl: window.location.origin + window.location.pathname
+    })
+  })
+  .then(function(res){ return res.json(); })
+  .then(function(res){
+    if(res.invoiceUrl){ window.location.href = res.invoiceUrl; }
+    else { alert(res.error || 'Не удалось создать счёт на оплату'); }
+  })
+  .catch(function(err){ alert('Ошибка: ' + err.message); });
+}
 
 // ==== АККАУНТ (Supabase Auth + подписка) ====
 var SUPABASE_URL = 'https://vnfrhbhujidkxmenhhgm.supabase.co';
