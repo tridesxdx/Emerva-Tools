@@ -31,7 +31,8 @@
   }
   .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px;}
   .brand img{width:26px;height:26px;object-fit:contain;filter:grayscale(1) brightness(1.6) contrast(1.4);}
-  .nav-links{display:flex;align-items:center;gap:28px;font-size:13.5px;color:var(--text-dim);}
+  .nav-links{display:flex;align-items:center;gap:28px;font-size:13.5px;color:var(--text-dim);
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);white-space:nowrap;}
   .nav-right{display:flex;align-items:center;gap:16px;}
   .lang-switch{display:flex;gap:4px;background:var(--pill-bg);border:1px solid var(--panel-border);border-radius:999px;padding:3px;}
   .lang-btn{background:transparent;border:none;color:var(--text-faint);font-family:inherit;font-weight:700;font-size:11px;padding:5px 10px;border-radius:999px;cursor:pointer;}
@@ -258,6 +259,11 @@
       <h3 data-i18n="f6Title">Работает как программа</h3>
       <p data-i18n="f6Desc">Отдельное окно на рабочем столе, без браузера — открыл и сразу за работу.</p>
     </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l1.8 5.5L19 9l-5.2 1.5L12 16l-1.8-5.5L5 9l5.2-1.5z"/><path d="M19 15l.9 2.7L22 18l-2.1.8L19 21l-.9-2.2L16 18l2.1-.3z"/></svg></div>
+      <h3 data-i18n="f7Title">AI-помощник для первого сообщения</h3>
+      <p data-i18n="f7Desc">Прямо в приложении генерирует текст для связи с владельцем канала — под 3 разных стиля, с историей по каждому каналу.</p>
+    </div>
   </div>
 </section>
 
@@ -366,6 +372,7 @@ var SITE_TT = {
     f4Title:'Готовые контакты', f4Desc:'Email и Telegram вытаскиваются из описания канала автоматически — без ручного копирования.',
     f5Title:'Квота под контролем', f5Desc:'Живой счётчик единиц YouTube API и таймер до сброса — никаких сюрпризов посреди поиска.',
     f6Title:'Работает как программа', f6Desc:'Отдельное окно на рабочем столе, без браузера — открыл и сразу за работу.',
+    f7Title:'AI-помощник для первого сообщения', f7Desc:'Прямо в приложении генерирует текст для связи с владельцем канала — под 3 разных стиля, с историей по каждому каналу.',
     howTitle:'Как это работает', howSub:'Три шага от установки до первого списка контактов.',
     step1Title:'Получи бесплатный ключ YouTube API', step1Desc:'Google Cloud Console выдаёт его бесплатно — квоты хватает на ~90 поисков в день.',
     step2Title:'Выбери язык и ниши', step2Desc:'UA, RU или ENG сегмент, плюс до 12 категорий — от геймдева до недвижимости.',
@@ -396,6 +403,7 @@ var SITE_TT = {
     f4Title:'Готові контакти', f4Desc:'Email і Telegram витягуються з опису каналу автоматично — без ручного копіювання.',
     f5Title:'Квота під контролем', f5Desc:'Живий лічильник одиниць YouTube API і таймер до скидання — жодних сюрпризів посеред пошуку.',
     f6Title:'Працює як програма', f6Desc:'Окреме вікно на робочому столі, без браузера — відкрив і одразу до роботи.',
+    f7Title:'AI-помічник для першого повідомлення', f7Desc:'Прямо в застосунку генерує текст для звʼязку з власником каналу — у 3 різних стилях, з історією по кожному каналу.',
     howTitle:'Як це працює', howSub:'Три кроки від встановлення до першого списку контактів.',
     step1Title:'Отримай безкоштовний ключ YouTube API', step1Desc:'Google Cloud Console видає його безкоштовно — квоти вистачає на ~90 пошуків на день.',
     step2Title:'Обери мову і ніші', step2Desc:'UA, RU або ENG сегмент, плюс до 12 категорій — від геймдеву до нерухомості.',
@@ -426,6 +434,7 @@ var SITE_TT = {
     f4Title:'Ready-made contacts', f4Desc:'Email and Telegram are pulled from the channel description automatically — no manual copying.',
     f5Title:'Quota under control', f5Desc:'A live YouTube API unit counter and a reset timer — no surprises mid-search.',
     f6Title:'Works like an app', f6Desc:'A separate desktop window, no browser — open it and get straight to work.',
+    f7Title:'AI assistant for the first message', f7Desc:'Generates outreach text for the channel owner right inside the app — 3 tone styles, with history saved per channel.',
     howTitle:'How it works', howSub:'Three steps from install to your first contact list.',
     step1Title:'Get a free YouTube API key', step1Desc:'Google Cloud Console issues it for free — the quota covers about 90 searches a day.',
     step2Title:'Pick a language and niches', step2Desc:'UA, RU or ENG segment, plus up to 12 categories — from gaming to real estate.',
