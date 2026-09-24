@@ -70,7 +70,8 @@
   .ai-point svg{flex:none;margin-top:2px;color:var(--accent);}
 
   .ai-mock{background:var(--panel);border:1px solid var(--panel-border);border-radius:16px;padding:20px;
-    box-shadow:0 20px 60px rgba(0,0,0,0.35);}
+    box-shadow:0 20px 60px rgba(0,0,0,0.35);display:block;cursor:pointer;transition:transform .18s ease,border-color .18s ease;}
+  .ai-mock:hover{transform:translateY(-3px);border-color:var(--accent);}
   .ai-mock-title{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
   .ai-mock-title svg{color:var(--accent);}
   .ai-mock label{display:block;font-size:11.5px;color:var(--text-faint);margin-bottom:6px;}
@@ -320,7 +321,7 @@
       </div>
     </div>
 
-    <div class="ai-mock" aria-hidden="true">
+    <a class="ai-mock" href="https://t.me/emerva_tools_bot" target="_blank" aria-label="Открыть Emerva Tools в Telegram">
       <div class="ai-mock-title">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l1.8 5.5L19 9l-5.2 1.5L12 16l-1.8-5.5L5 9l5.2-1.5z"/></svg>
         <span data-i18n="aiMockTitle">AI-помощник для связи</span>
@@ -337,7 +338,7 @@
         <div class="ai-mock-result-head"><span class="ai-mock-copy" data-i18n="aiMockCopy">Скопировать</span></div>
         <span data-i18n="aiMockResult">Привет! Смотрю за твоим каналом — крутая подача. Монтирую видео для авторов в похожей нише, могу помочь с удержанием зрителей. Если интересно — расскажу подробнее 🙌</span>
       </div>
-    </div>
+    </a>
   </div>
 </section>
 
